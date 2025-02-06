@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "raylib.h": "c",
+        "curses.h": "c",
+        "curspriv.h": "c"
+    }
+}
