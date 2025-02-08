@@ -1,7 +1,6 @@
 #define ALIVE 1
 #define DEAD 0
 
-
 typedef struct {
     
     double *position;
@@ -10,9 +9,9 @@ typedef struct {
 } Cell;
 
 
-Cell *new_cell(double *pos);
+void new_cell(Cell *pointing, double *pos);
 
-void* kill_cell(Cell *cell_to_kill);
+void kill_cell(Cell *cell_to_kill);
 
 //Returns a number between 0 (zero) and 8 (Eight).
 char near_alive(Cell *cell_to_check);
