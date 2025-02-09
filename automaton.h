@@ -1,19 +1,20 @@
 #define ALIVE 1
 #define DEAD 0
 
-typedef struct {
-    
-    double *position;
-    char state;
+typedef struct PCell{
+
+    int *position;
+    struct PCell *next;
+    struct PCell *prev;
 
 } Cell;
 
-
-void new_cell(Cell *pointing, double *pos);
+Cell* new_cell(int *pos);
 
 void kill_cell(Cell *cell_to_kill);
 
-//Returns a number between 0 (zero) and 8 (Eight).
 char near_alive(Cell *cell_to_check);
 
-char universe();
+double *get_coords(Cell *cell);
+
+void sim(Cell *cell_not_being_pointed);
