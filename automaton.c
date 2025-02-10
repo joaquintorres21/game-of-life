@@ -14,12 +14,20 @@ Cell *new_cell(int *position){
 
 }
 
-void kill_cell(Cell *cell){
+Cell *kill_cell(Cell *cell){
     
+    Cell *temp; 
     free(cell->position);
-    cell->prev->next = cell->next;
-    free(cell);
-    return NULL;
+    if(cell->prev) {
+        cell->prev->next = cell->next;
+        free(cell);
+        return NULL;
+    }
+    else {
+        temp = cell->next;
+        free(cell);
+        return temp;
+    }
     
 }
 
@@ -64,15 +72,30 @@ void sim(Cell *first){
     //kill zone bro
     Cell *current = first;
     Cell *temp; 
-    char x;
+    char neighbor_count;
+    char i = -1, j = -1;
+    int dyn_pos[2];
+    
+    current = first;
     while(current){
-        if((x = near_alive(current->position)) < 2 || x > 3) {
+        neighbor_count = near_alive(current->position);
+        if(neighbor_count < 2 || neighbor_count > 3){
             temp = current->next;
             kill_cell(current);
             current = temp;
             temp = NULL;
         }
+        while(i < 2){
+            while(j < 2){
+                dyn_pos[0] = current->position[0] + i;
+                dyn_pos[1] = current->position[1] + j;
+                if(near_alive(dyn_pos) > 2 && !is_alive(dyn_pos[0], dyn_pos[1])) new_cell(dyn_pos);
+                j++;
+            }
+            i++;
+        }
+        
     }
     
-
+    return NULL;
 }

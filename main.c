@@ -64,12 +64,16 @@ char ui_print(char state, int* screen){
 }
 
 void print_cells(Cell *last){
-    
-    Cell *current = last->prev;
-    if(current){
-
-        mvprintw(current->position[1], current->position[0], "%c", 254);
-    
+    Cell *current = last;
+    while(1){
+        if(current->prev){
+            mvprintw(current->position[1], current->position[0], "%c", 254);
+            current = current->prev;
+        }
+        else {
+            mvprintw(current->position[1], current->position[0], "%c", 254);
+            break;
+        }
     }
 
 }

@@ -14,7 +14,7 @@ typedef struct PCell{
 
 Cell* new_cell(int *pos);
 
-void kill_cell(Cell *cell_to_kill);
+Cell *kill_cell(Cell *cell_to_kill);
 
 void kill_all(Cell *first);
 
