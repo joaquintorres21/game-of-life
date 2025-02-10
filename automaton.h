@@ -1,6 +1,9 @@
 #define ALIVE 1
 #define DEAD 0
 
+#define ICON 254 //Rectangle for symbolizing the cells.
+
+
 typedef struct PCell{
 
     int *position;

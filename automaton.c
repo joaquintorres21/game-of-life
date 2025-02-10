@@ -56,5 +56,23 @@ char near_alive(int *pos){
 }
 
 char is_alive(int x, int y){
-    return (mvinch(y, x) & A_CHARTEXT == '*');
+    //Bitwise operation to delete all style stuff and equaling to the icon.
+    return (mvinch(y, x) & A_CHARTEXT == ICON);
+}
+
+void sim(Cell *first){
+    //kill zone bro
+    Cell *current = first;
+    Cell *temp; 
+    char x;
+    while(current){
+        if((x = near_alive(current->position)) < 2 || x > 3) {
+            temp = current->next;
+            kill_cell(current);
+            current = temp;
+            temp = NULL;
+        }
+    }
+    
+
 }
