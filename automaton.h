@@ -13,8 +13,12 @@ Cell* new_cell(int *pos);
 
 void kill_cell(Cell *cell_to_kill);
 
-char near_alive(Cell *cell_to_check);
+void kill_all(Cell *first);
+
+char near_alive(int *cell_to_check);
+
+char is_alive(int x, int y);
 
 double *get_coords(Cell *cell);
 
-void sim(Cell *cell_not_being_pointed);
+void sim(Cell *first_cell);

@@ -104,7 +104,7 @@ char controller(char* sim_ptr){
     }
 
     if(c == 'X' || c == 'x'){
-        clear();
+        
         return 0;
     }
 
