@@ -12,16 +12,16 @@ typedef struct PCell{
 
 } Cell;
 
-Cell* new_cell(int *pos);
+void sim(Cell *first_cell);
 
-Cell *kill_cell(Cell *cell_to_kill);
+void kill_cell(Cell *cell_to_kill);
 
 void kill_all(Cell *first);
+
+Cell* new_cell(int *pos);
+
+int *get_pos(Cell *cell);
 
 char near_alive(int *cell_to_check);
 
 char is_alive(int x, int y);
-
-double *get_coords(Cell *cell);
-
-void sim(Cell *first_cell);

@@ -6,45 +6,40 @@
 
 Cell *new_cell(int *position){
     
-    Cell *my_cell = (Cell*)malloc(sizeof *my_cell);
+    Cell *my_cell = (Cell*)malloc(sizeof(Cell));
     my_cell->position = (int*)malloc(2*sizeof(int));
     my_cell->position[0] = position[0];
     my_cell->position[1] = position[1];
+    my_cell->next = NULL;
+    my_cell->prev = NULL;
     return my_cell;
 
 }
 
-Cell *kill_cell(Cell *cell){
+void kill_cell(Cell *cell){
     
     Cell *temp; 
     free(cell->position);
-    if(cell->prev) {
-        cell->prev->next = cell->next;
-        free(cell);
-        return NULL;
-    }
-    else {
-        temp = cell->next;
-        free(cell);
-        return temp;
-    }
+    free(cell);
+    return;
     
 }
 
 void kill_all(Cell *first){
     
     Cell *current = first;
-    Cell *next;
-    while((next = current->next)){
+    Cell *temp;
+    while(current){
+        temp = current->next;
         free(current->position);
         free(current);
-        current = next;
+        current = temp;
     }
-    return NULL;
+    return;
 
 }
 
-double *get_pos(Cell *cell){
+int *get_pos(Cell *cell){
     return cell->position;
 }
 
@@ -54,8 +49,8 @@ char near_alive(int *pos){
     
     while(i < 2){
         while(j < 2){
-            if((j==i==0)) continue;
-            result += is_alive(pos[0]+i, pos[1]+j);
+            if((j == 0 && i ==0)) continue;
+            result += is_alive(pos[0] + i, pos[1] + j);
             j++;
         }
         i++;
@@ -65,11 +60,11 @@ char near_alive(int *pos){
 
 char is_alive(int x, int y){
     //Bitwise operation to delete all style stuff and equaling to the icon.
-    return (mvinch(y, x) & A_CHARTEXT == ICON);
+    return ((mvinch(y, x) & A_CHARTEXT) == ICON);
 }
 
 void sim(Cell *first){
-    //kill zone bro
+
     Cell *current = first;
     Cell *temp; 
     char neighbor_count;
@@ -89,6 +84,8 @@ void sim(Cell *first){
             while(j < 2){
                 dyn_pos[0] = current->position[0] + i;
                 dyn_pos[1] = current->position[1] + j;
+                //since is alive checks character instead of object, the function returns
+                //a truthy even if the current cell has been deleted.
                 if(near_alive(dyn_pos) > 2 && !is_alive(dyn_pos[0], dyn_pos[1])) new_cell(dyn_pos);
                 j++;
             }
@@ -97,5 +94,5 @@ void sim(Cell *first){
         
     }
     
-    return NULL;
+    return;
 }

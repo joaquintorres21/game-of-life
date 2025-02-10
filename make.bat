@@ -1,1 +1,1 @@
-gcc -o test.exe main.c C:\MinGW\include\PDCurses\wincon\pdcurses.a
+gcc -o test.exe main.c C:\MinGW\include\PDCurses\wincon\pdcurses.a automaton.c

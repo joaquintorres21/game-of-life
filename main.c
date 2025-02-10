@@ -16,13 +16,12 @@
 //The program declarations.
 #include "automaton.h"
 
-Cell *last = NULL;
 Cell *first = NULL;
 
-int update(void);
-char ui_print(char state, int* dimension);
-char controller(char* simulation_state_address);
-void print_cells(Cell *last_cell);
+int update();
+void ui_print(char state, int* dimension);
+void controller(char* simulation_state_address);
+void print_cells(Cell *first_cell);
 
 MEVENT event;
 char sim_state;
@@ -47,38 +46,32 @@ int main(){
 
         ui_print(sim_state, screen_dimension);
         controller(&sim_state);
-        print_cells(last);
         update();
     
     }
 
 }
 
-char ui_print(char state, int* screen){
+void ui_print(char state, int* screen){
 
     mvprintw(0, 0, "Z - Resume/Pause | X - Restart | C - Exit");
     if(state) mvprintw(1, screen[0] - 10, "PAUSED");
     else mvprintw(1, screen[0] - 10, "      ");
-    return 0;
-
+    
 }
 
-void print_cells(Cell *last){
-    Cell *current = last;
-    while(1){
-        if(current->prev){
-            mvprintw(current->position[1], current->position[0], "%c", 254);
-            current = current->prev;
-        }
-        else {
-            mvprintw(current->position[1], current->position[0], "%c", 254);
-            break;
-        }
+void print_cells(Cell *first){
+    
+    Cell *current = first;
+    while(current){
+        mvprintw(current->position[1], current->position[0], "%c", 254);
+        current = current->next;
     }
+    return;
 
 }
 
-char controller(char* sim_ptr){
+void controller(char* sim_ptr){
     
     int c = getch();
     if(c == KEY_MOUSE){
@@ -86,37 +79,39 @@ char controller(char* sim_ptr){
 
             if(event.bstate & BUTTON1_CLICKED){
                 
+                Cell *temp = first;
+                
                 mouse_pos[0] = event.x;
                 mouse_pos[1] = event.y;
-                if(last) {
-                    
-                    last->next = new_cell(mouse_pos);
-                    last->next->prev = last;
 
+                if(is_alive(mouse_pos[0], mouse_pos[1])) return;
+                if(temp) {
+                    while(temp->next) temp = temp->next;
+                    temp->next = new_cell(mouse_pos);
                 }
-                last = last->next;
+                else first = new_cell(mouse_pos);
 
             }
 
-            return 0;
+            return;
         }
     }
 
     if(c == 'Z' || c == 'z'){
         *(sim_ptr) = !(*(sim_ptr));
-        return 0;
+        return;
     }
 
     if(c == 'X' || c == 'x'){
-        
-        return 0;
+        kill_all(first);
+        return;
     }
 
     if(c == 'C' || c == 'c'){
         exit(0);
     }
 
-    return 0;
+    return;
 }
 
 int update(){
