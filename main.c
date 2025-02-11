@@ -10,9 +10,6 @@
 //Included for refreshing
 #include <time.h>
 
-//Included for multithreading on array roaming.
-#include <windows.h>
-
 //The program declarations.
 #include "automaton.h"
 
@@ -43,9 +40,11 @@ int main(){
     getmaxyx(stdscr, screen_dimension[1], screen_dimension[0]);
 
     program_loop{
-
+        //Previously the program had a menu with a cursor, now are just buttons
         ui_print(sim_state, screen_dimension);
         controller(&sim_state);
+        print_cells(first);
+        if(!sim_state) sim(&first);
         update();
     
     }
@@ -75,10 +74,10 @@ void controller(char* sim_ptr){
     
     int c = getch();
     if(c == KEY_MOUSE){
-        if(nc_getmouse(&event) == OK){
+        if(!nc_getmouse(&event)){
 
             if(event.bstate & BUTTON1_CLICKED){
-                
+
                 Cell *temp = first;
                 
                 mouse_pos[0] = event.x;
@@ -103,7 +102,11 @@ void controller(char* sim_ptr){
     }
 
     if(c == 'X' || c == 'x'){
-        kill_all(first);
+        if(first) {
+            kill_all(first); 
+            first = NULL;
+            clear();
+        } 
         return;
     }
 
@@ -118,7 +121,7 @@ int update(){
     clock_t time_0;
     time_0 = clock();
     routine_loop{
-        if((clock() - time_0) > 100) break;
+        if((clock() - time_0) > 10) break;
     }
     return refresh();
 }
