@@ -1,6 +1,8 @@
 #define program_loop for(;;)
 #define routine_loop for(;;)
 
+#define NCURSES_MOUSE_VERSION
+
 //Visualize the result.
 #include <curses.h>
 
@@ -18,7 +20,7 @@ Cell *first = NULL;
 int update();
 void ui_print(char state, int* dimension);
 void controller(char* simulation_state_address);
-void print_cells(Cell *first_cell);
+void print_cells(Cell *first_cell, char print_or_del);
 
 MEVENT event;
 char sim_state;
@@ -40,11 +42,12 @@ int main(){
     getmaxyx(stdscr, screen_dimension[1], screen_dimension[0]);
 
     program_loop{
+        
         //Previously the program had a menu with a cursor, now are just buttons
         ui_print(sim_state, screen_dimension);
         controller(&sim_state);
-        print_cells(first);
         if(!sim_state) sim(&first);
+        print_cells(first, PRINT);
         update();
     
     }
@@ -59,11 +62,12 @@ void ui_print(char state, int* screen){
     
 }
 
-void print_cells(Cell *first){
+void print_cells(Cell *first, char print_or_del){
     
     Cell *current = first;
+    int print = print_or_del ? ' ' : ICON;
     while(current){
-        mvprintw(current->position[1], current->position[0], "%c", 254);
+        mvprintw(current->position[1], current->position[0], "%c", print);
         current = current->next;
     }
     return;
@@ -105,7 +109,6 @@ void controller(char* sim_ptr){
         if(first) {
             kill_all(first); 
             first = NULL;
-            clear();
         } 
         return;
     }

@@ -3,6 +3,11 @@
 
 #define ICON 254 //Rectangle for symbolizing the cells.
 
+#define PRINT 0
+#define DEL 1
+
+#define PDC_LOG
+#include <curses.h>
 
 typedef struct PCell{
 
@@ -24,3 +29,5 @@ int *get_pos(Cell *cell);
 char near_alive(int *cell_to_check);
 
 char is_alive(int x, int y);
+
+int count_cells(Cell *first_cell);

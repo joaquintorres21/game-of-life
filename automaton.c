@@ -2,9 +2,6 @@
 
 #include <stdlib.h>
 
-#define PDC_LOG
-#include <curses.h>
-
 Cell *new_cell(int *position){
     
     Cell *my_cell = (Cell*)malloc(sizeof(Cell));
@@ -17,46 +14,61 @@ Cell *new_cell(int *position){
 }
 
 void sim(Cell **first_add){
-
-    Cell *current = *first_add;
-    if(!*first_add) return;
-    Cell *temp; 
-    char neighbor_count;
-    char i = -1, j;
-    int dyn_pos[2];
-    if((neighbor_count = near_alive(current->position)) < 2 || neighbor_count < 3){
-        *first_add = current->next;
-        kill_cell(current);
-        current = *first_add;
-    }
-    while(current){
-        temp = current->next;
-        neighbor_count = near_alive(temp->position);
-        if(neighbor_count < 2 || neighbor_count > 3){
-            current->next = temp->next;
-            kill_cell(temp);
-        }
-        while(i < 2){
-            j = -1;
-            while(j < 2){
-                if(j == 0 && i == 0) continue;
-                dyn_pos[0] = current->position[0] + i;
-                dyn_pos[1] = current->position[1] + j;
-                //since is_alive() checks character instead of object, the function returns
-                //a truthy even if the current cell has been already deleted.
-                if(near_alive(dyn_pos) > 2 && !is_alive(dyn_pos[0], dyn_pos[1])) new_cell(dyn_pos);
-                j++;
-            }
-            i++;
-        }
-        current = temp;
-    }
     
-    return;
+    if(!*first_add) return;
+    Cell *current = *first_add;
+    Cell *temp, *save, *sub_list, *new, *first_sub;
+    save = sub_list = new = first_sub = NULL;
+    char neighbor_count;
+    char i = -1, j = -1;
+    int static_pos[2], dyn_pos[2];
+
+    while(1){
+        
+        static_pos[0] = current->position[0];
+        static_pos[1] = current->position[1];
+        temp = current->next;
+        
+        neighbor_count = near_alive(current->position);
+        if(neighbor_count < 2 || neighbor_count > 3){
+            if(current == *first_add)
+                *first_add = temp;
+            kill_cell(current);
+        } 
+        else {
+            if(save) save->next = current;
+            save = current;
+        }
+        
+        while(i < 2){
+          while(j < 2){
+            dyn_pos[0] = static_pos[0] + i;
+            dyn_pos[1] = static_pos[1] + j;
+            //since is_alive() checks character instead of object, the function returns
+            //a truthy even if the current cell has been already deleted.
+            if(near_alive(dyn_pos) > 2 && !is_alive(dyn_pos[0], dyn_pos[1])){
+                new = new_cell(dyn_pos);
+                if(sub_list) sub_list->next = new;
+                else first_sub = new;
+                sub_list = new;
+            }
+            j++;
+        }
+        j = -1;
+        i++;
+        }
+
+        if(!(current = temp)){
+            if(first_sub) save->next = first_sub;
+            //else save->next = NULL;
+            return;
+        }
+    }
 }
 
 void kill_cell(Cell *cell){
-    
+
+    mvprintw(cell->position[1], cell->position[0], " ");
     free(cell->position);
     free(cell);
     return;
@@ -81,18 +93,18 @@ int *get_pos(Cell *cell){
 }
 
 char near_alive(int *pos){
-    char i = -1, j;
+    signed char i = -1;
+    signed char j;
     char result = 0;
     
     while(i < 2){
         j = -1;
         while(j < 2){
-            if((j == 0 && i == 0)) continue;
             result += is_alive(pos[0] + i, pos[1] + j++);
         }
         i++;
     }
-    return result;
+    return result-1;
 }
 
 char is_alive(int pos_x, int pos_y){
@@ -100,4 +112,11 @@ char is_alive(int pos_x, int pos_y){
     chtype formatted = mvinch(pos_y, pos_x);
     if((formatted & A_CHARTEXT) == ICON) return 1;
     return 0;
+}
+
+int count_cells(Cell *first){
+    if(!first) return 0;
+    int i = 1;
+    while((first= first->next)) i++;
+    return i;
 }
