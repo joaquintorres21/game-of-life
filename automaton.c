@@ -14,56 +14,23 @@ Cell *new_cell(int *position){
 }
 
 void sim(Cell **first_add){
-    
-    if(!*first_add) return;
     Cell *current = *first_add;
-    Cell *temp, *save, *sub_list, *new, *first_sub;
-    save = sub_list = new = first_sub = NULL;
-    char neighbor_count;
-    char i = -1, j = -1;
-    int static_pos[2], dyn_pos[2];
-
-    while(1){
-        
-        static_pos[0] = current->position[0];
-        static_pos[1] = current->position[1];
-        temp = current->next;
-        
-        neighbor_count = near_alive(current->position);
-        if(neighbor_count < 2 || neighbor_count > 3){
-            if(current == *first_add)
-                *first_add = temp;
-            kill_cell(current);
-        } 
-        else {
-            if(save) save->next = current;
-            save = current;
-        }
-        
-        while(i < 2){
-          while(j < 2){
-            dyn_pos[0] = static_pos[0] + i;
-            dyn_pos[1] = static_pos[1] + j;
-            //since is_alive() checks character instead of object, the function returns
-            //a truthy even if the current cell has been already deleted.
-            if(near_alive(dyn_pos) > 2 && !is_alive(dyn_pos[0], dyn_pos[1])){
-                new = new_cell(dyn_pos);
-                if(sub_list) sub_list->next = new;
-                else first_sub = new;
-                sub_list = new;
-            }
-            j++;
-        }
-        j = -1;
-        i++;
-        }
-
-        if(!(current = temp)){
-            if(first_sub) save->next = first_sub;
-            //else save->next = NULL;
-            return;
+    Cell *save = NULL;
+    while(current) {
+        if(!sim_kill(current)){
+           if(save) save->next = current;
+           save = current;
         }
     }
+}
+
+Cell *sim_kill(Cell *cell){
+    char near;
+    if((near = near_alive(cell->position)) < 2 || near > 3){
+        Cell *next = cell->next;
+        kill_cell(cell);
+        return next;
+    } return NULL;
 }
 
 void kill_cell(Cell *cell){

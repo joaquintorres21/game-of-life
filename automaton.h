@@ -13,6 +13,7 @@ typedef struct PCell{
 
     int *position;
     struct PCell *next;
+    struct PCell *prev;
 
 } Cell;
 
