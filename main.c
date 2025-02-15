@@ -17,7 +17,7 @@
 
 Cell *first = NULL;
 
-int update();
+int update(int state);
 void ui_print(char state, int* dimension);
 void controller(char* simulation_state_address);
 void print_cells(Cell *first_cell, char print_or_del);
@@ -46,10 +46,15 @@ int main(){
         //Previously the program had a menu with a cursor, now are just buttons
         ui_print(sim_state, screen_dimension);
         controller(&sim_state);
-        if(!sim_state) sim(&first);
+        
+        if(!sim_state){
+            sim(&first, screen_dimension);
+            clear();
+        }
+
         print_cells(first, PRINT);
-        update();
-    
+        update(sim_state);
+        
     }
 
 }
@@ -57,6 +62,7 @@ int main(){
 void ui_print(char state, int* screen){
 
     mvprintw(0, 0, "Z - Resume/Pause | X - Restart | C - Exit");
+    mvprintw(10,0,"%d : %d", screen[0], screen[1]);
     if(state) mvprintw(1, screen[0] - 10, "PAUSED");
     else mvprintw(1, screen[0] - 10, "      ");
     
@@ -108,6 +114,7 @@ void controller(char* sim_ptr){
     if(c == 'X' || c == 'x'){
         if(first) {
             kill_all(first); 
+            clear();
             first = NULL;
         } 
         return;
@@ -120,11 +127,12 @@ void controller(char* sim_ptr){
     return;
 }
 
-int update(){
+int update(int sim){
     clock_t time_0;
     time_0 = clock();
+    int x = sim ? 10 : 750;
     routine_loop{
-        if((clock() - time_0) > 10) break;
+        if((clock() - time_0) > x) break;
     }
     return refresh();
 }

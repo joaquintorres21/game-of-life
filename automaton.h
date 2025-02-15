@@ -19,7 +19,7 @@ typedef struct PCell{
 
 Cell* new_cell(int *pos);
 
-void sim(Cell **first_cell);
+void sim(Cell **first_cell, int *dimension);
 
 void kill_cell(Cell *cell_to_kill);
 
@@ -32,3 +32,5 @@ char near_alive(int *cell_to_check);
 char is_alive(int x, int y);
 
 int count_cells(Cell *first_cell);
+
+Cell *sim_kill(Cell *cell);
