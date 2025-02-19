@@ -49,12 +49,11 @@ int main(){
         
         if(!sim_state){
             sim(&first, screen_dimension);
-            clear();
+            clear();   
         }
 
         print_cells(first, PRINT);
         update(sim_state);
-        
     }
 
 }
@@ -130,7 +129,7 @@ void controller(char* sim_ptr){
 int update(int sim){
     clock_t time_0;
     time_0 = clock();
-    int x = sim ? 10 : 750;
+    int x = sim ? 10 : 300;
     routine_loop{
         if((clock() - time_0) > x) break;
     }
